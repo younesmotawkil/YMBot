@@ -18,7 +18,6 @@ const __dirname = path.dirname(__filename);
 
 const CATEGORY_SELECT_ID = "help-category-select";
 const ALL_COMMANDS_ID = "help-all-commands";
-const BUG_REPORT_BUTTON_ID = "help-bug-report";
 const HELP_MENU_TIMEOUT_MS = 5 * 60 * 1000;
 
 const CATEGORY_ICONS = {
@@ -124,7 +123,6 @@ export async function createInitialHelpMenu(client) {
     );
 
     const buttonRow = new ActionRowBuilder().addComponents([
-        bugReportButton,
         supportButton,
     ]);
 
