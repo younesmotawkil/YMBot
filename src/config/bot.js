@@ -26,7 +26,7 @@ export const botConfig = {
         name: "Your Life...", // required by Discord API, not shown in the client
         state: "I'm Watching You 👀...",     // this is what people actually see
         type: 1,               // Custom
-        url: "https://www.twitch.tv"
+        url: "https://www.twitch.tv/xqc"
       },
     ],
   },
