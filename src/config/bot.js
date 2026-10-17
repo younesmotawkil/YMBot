@@ -23,9 +23,10 @@ export const botConfig = {
     // 5 = Competing
     activities: [
       {
-        name: "Stalking...", // required by Discord API, not shown in the client
+        name: "Your Life...", // required by Discord API, not shown in the client
         state: "I'm Watching You 👀...",     // this is what people actually see
-        type: 5,               // Custom
+        type: 1,               // Custom
+        url: "https://www.twitch.tv"
       },
     ],
   },
