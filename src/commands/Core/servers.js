@@ -68,37 +68,23 @@ export default {
         .setName('servers')
         .setDescription('View and manage the servers where the bot is installed')
         .setDMPermission(true)
-        .addSubcommand((subcommand) => subcommand
-            .setName('list')
-            .setDescription('List the servers and generate invite links'))
-        .addSubcommand((subcommand) => subcommand
-            .setName('info')
-            .setDescription('Show details and an invite link for one server')
-            .addStringOption((option) => option
-                .setName('server')
-                .setDescription('The server to inspect')
-                .setRequired(true)
-                .setAutocomplete(true)))
-        .addSubcommand((subcommand) => subcommand
-            .setName('invite')
-            .setDescription('Generate a permanent invite link for one server')
-            .addStringOption((option) => option
-                .setName('server')
-                .setDescription('The server to invite someone to')
-                .setRequired(true)
-                .setAutocomplete(true)))
-        .addSubcommand((subcommand) => subcommand
-            .setName('leave')
-            .setDescription('Make the bot leave one server')
-            .addStringOption((option) => option
-                .setName('server')
-                .setDescription('The server to leave')
-                .setRequired(true)
-                .setAutocomplete(true))
-            .addBooleanOption((option) => option
-                .setName('confirm')
-                .setDescription('Confirm that the bot should leave this server')
-                .setRequired(true))),
+        .addStringOption((option) => option
+            .setName('action')
+            .setDescription('Choose what to do')
+            .setRequired(true)
+            .addChoices(
+                { name: 'List', value: 'list' },
+                { name: 'Info', value: 'info' },
+                { name: 'Invite', value: 'invite' },
+                { name: 'Leave', value: 'leave' },
+            ))
+        .addStringOption((option) => option
+            .setName('server')
+            .setDescription('The server to inspect or manage')
+            .setAutocomplete(true))
+        .addBooleanOption((option) => option
+            .setName('confirm')
+            .setDescription('Required to confirm a leave action')),
 
     async autocomplete(interaction, client) {
         if (!isBotOwner(interaction.user?.id)) {
@@ -125,10 +111,10 @@ export default {
             return;
         }
 
-        const subcommand = interaction.options.getSubcommand();
+        const action = interaction.options.getString('action', true);
         await InteractionHelper.safeDefer(interaction, { flags: MessageFlags.Ephemeral });
 
-        if (subcommand === 'list') {
+        if (action === 'list') {
             const guilds = [...client.guilds.cache.values()]
                 .sort((left, right) => left.name.localeCompare(right.name));
             const listedGuilds = guilds.slice(0, MAX_LISTED_GUILDS);
@@ -149,7 +135,8 @@ export default {
             return;
         }
 
-        const guild = getGuildFromOption(interaction, client);
+        const guildId = interaction.options.getString('server', true);
+        const guild = findGuild(client, guildId);
         if (!guild) {
             await InteractionHelper.safeEditReply(interaction, {
                 embeds: [createEmbed({ title: 'Server not found', description: 'That server is no longer available to the bot.', color: 'error' })],
@@ -157,8 +144,8 @@ export default {
             return;
         }
 
-        if (subcommand === 'leave') {
-            if (!interaction.options.getBoolean('confirm', true)) {
+        if (action === 'leave') {
+            if (!interaction.options.getBoolean('confirm')) {
                 await InteractionHelper.safeEditReply(interaction, {
                     embeds: [createEmbed({ title: 'Confirmation required', description: 'Set `confirm` to `true` to make the bot leave this server.', color: 'warning' })],
                 });
