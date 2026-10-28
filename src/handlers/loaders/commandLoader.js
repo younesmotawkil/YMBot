@@ -245,12 +245,26 @@ async function registerGlobalCommands(client, clientId, commands, totalSubcomman
         throw new Error('Discord REST client is not available for slash command registration');
     }
 
-    logger.info(`Preparing to register ${totalSubcommands + commands.length} commands globally`);
+    logger.info(`Preparing to register ${totalSubcommands + commands.length} commands`);
     logger.info('Validating commands before registration...');
     validateCommands(commands);
     logger.info('Command validation passed');
 
     const commandsToRegister = prepareCommandsForRegistration(commands);
+    const testGuildId = botConfig.commands?.testGuildId;
+
+    if (testGuildId) {
+        logger.info(`Registering ${commandsToRegister.length} commands to test guild ${testGuildId}...`);
+
+        if (botConfig.commands?.deleteCommands) {
+            logger.info(`Clearing existing commands for guild ${testGuildId} before registration...`);
+            await client.rest.put(`/applications/${clientId}/guilds/${testGuildId}/commands`, { body: [] });
+        }
+
+        await client.rest.put(`/applications/${clientId}/guilds/${testGuildId}/commands`, { body: commandsToRegister });
+        logger.info(`Successfully registered ${commandsToRegister.length} commands to guild ${testGuildId}`);
+        return;
+    }
 
     if (botConfig.commands?.deleteCommands) {
         logger.info('Clearing existing global commands before registration...');
@@ -258,15 +272,6 @@ async function registerGlobalCommands(client, clientId, commands, totalSubcomman
     }
 
     logger.info(`Registering ${commandsToRegister.length} global commands...`);
-    await client.rest.put(`/applications/${clientId}/commands`, { body: commandsToRegister });
-    logger.info(`Successfully registered ${commandsToRegister.length} global commands`);
-    logger.info('Global commands may take up to an hour to appear in all servers on first deploy');
-}
-
-export async function registerCommands(client, options = {}) {
-    const { clientId = null } = options;
-
-    try {
         const { commands, totalSubcommands } = collectCommandPayloads(client);
         await registerGlobalCommands(client, clientId, commands, totalSubcommands);
     } catch (error) {
