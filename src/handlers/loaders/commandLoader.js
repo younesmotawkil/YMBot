@@ -272,6 +272,15 @@ async function registerGlobalCommands(client, clientId, commands, totalSubcomman
     }
 
     logger.info(`Registering ${commandsToRegister.length} global commands...`);
+    await client.rest.put(`/applications/${clientId}/commands`, { body: commandsToRegister });
+    logger.info(`Successfully registered ${commandsToRegister.length} global commands`);
+    logger.info('Global commands may take up to an hour to appear in all servers on first deploy');
+}
+
+export async function registerCommands(client, options = {}) {
+    const { clientId = null } = options;
+
+    try {
         const { commands, totalSubcommands } = collectCommandPayloads(client);
         await registerGlobalCommands(client, clientId, commands, totalSubcommands);
     } catch (error) {
