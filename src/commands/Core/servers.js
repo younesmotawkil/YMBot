@@ -10,11 +10,6 @@ import { isBotOwner } from '../../config/bot.js';
 
 const MAX_LISTED_GUILDS = 25;
 
-        if (!isBotOwner(interaction.user?.id)) {
-            await interaction.respond([]);
-            return;
-        }
-
 function getGuildOption(interaction) {
     return interaction.options.getString('server', true);
 }
@@ -30,8 +25,8 @@ function getInviteChannel(guild) {
     }
 
     const channels = guild.channels.cache.filter((channel) => (
-        channel.type === ChannelType.GuildText
-        && channel.permissionsFor(botMember)?.has(PermissionFlagsBits.CreateInstantInvite)
+        channel.type === ChannelType.GuildText &&
+        channel.permissionsFor(botMember)?.has(PermissionFlagsBits.CreateInstantInvite)
     ));
 
     return channels.find((channel) => channel.id === guild.systemChannelId) || channels.first();
@@ -57,8 +52,7 @@ async function createGuildInvite(guild) {
 }
 
 function getGuildFromOption(interaction, client) {
-    const guild = findGuild(client, getGuildOption(interaction));
-    return guild;
+    return findGuild(client, getGuildOption(interaction));
 }
 
 function buildGuildChoices(client) {
@@ -69,6 +63,7 @@ function buildGuildChoices(client) {
 }
 
 export default {
+    category: 'Core',
     data: new SlashCommandBuilder()
         .setName('servers')
         .setDescription('View and manage the servers where the bot is installed')
@@ -106,10 +101,15 @@ export default {
                 .setRequired(true))),
 
     async autocomplete(interaction, client) {
+        if (!isBotOwner(interaction.user?.id)) {
+            await interaction.respond([]);
+            return;
+        }
+
         const focused = interaction.options.getFocused().toLowerCase();
         const choices = buildGuildChoices(client)
             .filter((choice) => choice.name.toLowerCase().includes(focused));
-        await interaction.respond(choices);
+        await interaction.respond(choices.slice(0, 25));
     },
 
     async execute(interaction, _guildConfig, client) {
@@ -126,7 +126,7 @@ export default {
         }
 
         const subcommand = interaction.options.getSubcommand();
-    await InteractionHelper.safeDefer(interaction, { flags: MessageFlags.Ephemeral });
+        await InteractionHelper.safeDefer(interaction, { flags: MessageFlags.Ephemeral });
 
         if (subcommand === 'list') {
             const guilds = [...client.guilds.cache.values()]
