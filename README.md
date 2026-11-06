@@ -1,6 +1,22 @@
-# TitanBot - Ultimate Discord Bot
+# YMbot - Ultimate Discord Bot
 
-**TitanBot** is a powerful, feature-rich Discord bot designed to enhance your server experience with comprehensive moderation tools, engaging economy systems, utility features, and much more. Built with modern Discord.js v14 and PostgreSQL for optimal performance and data persistence.
+**YMbot** is a modular Discord bot designed to enhance your server experience with moderation tools, economy systems, utility features, and more. Built with modern Discord.js v14 and PostgreSQL for reliable performance and data persistence.
+
+## Customize Commands
+
+Commands live in `src/commands`, organized into category folders. To customize YMbot, add, remove, or edit command files there. Each command must export:
+
+```js
+export const data = new SlashCommandBuilder()
+   .setName('example')
+   .setDescription('Example command');
+
+export async function execute(interaction) {
+   await interaction.reply('Hello from YMbot!');
+}
+```
+
+YMbot discovers command files recursively and registers them automatically when it starts. The folder name is used as the command category. Use `TEST_GUILD_ID` during development for fast guild-scoped registration; omit it for global registration.
 
 [![Support Server](https://img.shields.io/badge/-Support%20Server-%235865F2?logo=discord&logoColor=white&style=flat-square&logoWidth=20)](https://discord.gg/8kJBYhTGW9)
 [![Discord.js](https://img.shields.io/npm/v/discord.js?style=flat-square&labelColor=%23202225&color=%23202225&logo=npm&logoColor=white&logoWidth=20)](https://www.npmjs.com/package/discord.js)
@@ -18,7 +34,7 @@
 <a name="features-overview"></a>
 ## Features Overview
 
-TitanBot offers a complete suite of tools for Discord server management and community engagement:
+YMbot offers a complete suite of tools for Discord server management and community engagement:
 
 <table>
 <tr>
@@ -96,23 +112,23 @@ TitanBot offers a complete suite of tools for Discord server management and comm
 
 ### Video Tutorial
 For a detailed step-by-step setup guide, watch our comprehensive video tutorial:
-[**TitanBot Setup Tutorial**](https://www.youtube.com/@TouchDisc)
+[**YMbot Setup Tutorial**](https://www.youtube.com/@TouchDisc)
 
 ## Docker Deployment (Recommended)
 
-TitanBot is fully containerized for easy deployment.
+YMbot is fully containerized for easy deployment.
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/codebymitch/TitanBot.git
-   cd TitanBot
+   git clone https://github.com/younesmotawkil/YMBot.git
+   cd YMBot
    ```
 
 2. **Configure environment variables:**
    ```bash
    cp .env.example .env
    ```
-   Set at minimum `DISCORD_TOKEN`, `CLIENT_ID`, and `GUILD_ID`. Docker Compose also reads `POSTGRES_USER`, `POSTGRES_PASSWORD`, and `POSTGRES_DB` from `.env` (defaults: `titanbot` / `password` / `titanbot`).
+   Set at minimum `DISCORD_TOKEN`, `CLIENT_ID`, and `GUILD_ID`. Docker Compose also reads `POSTGRES_USER`, `POSTGRES_PASSWORD`, and `POSTGRES_DB` from `.env` (defaults: `ymbot` / `password` / `ymbot`).
 
 3. **Build and start the containers:**
    ```bash
@@ -148,7 +164,7 @@ Music uses [Lavalink v4](https://github.com/lavalink-devs/Lavalink) via [Riffy](
 The bot is automatically published to GitHub Container Registry on every push to main.
 
 ```bash
-docker pull ghcr.io/codebymitch/titanbot:main
+docker pull ghcr.io/younesmotawkil/ymbot:main
 ```
 
 <a name="manual-installation-steps"></a>
@@ -161,8 +177,8 @@ docker pull ghcr.io/codebymitch/titanbot:main
 
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/codebymitch/TitanBot.git
-   cd TitanBot
+   git clone https://github.com/younesmotawkil/YMBot.git
+   cd YMBot
    ```
 
 2. **Install Dependencies**
@@ -182,10 +198,10 @@ docker pull ghcr.io/codebymitch/titanbot:main
    GUILD_ID=your_discord_guild_id_here
 
    # PostgreSQL Configuration (Primary Database)
-   POSTGRES_URL=postgresql://postgres:yourpassword@localhost:5432/titanbot
+   POSTGRES_URL=postgresql://postgres:yourpassword@localhost:5432/ymbot
    POSTGRES_HOST=localhost
    POSTGRES_PORT=5432
-   POSTGRES_DB=titanbot
+   POSTGRES_DB=ymbot
    POSTGRES_USER=postgres
    POSTGRES_PASSWORD=yourpassword
    ```
@@ -194,7 +210,7 @@ docker pull ghcr.io/codebymitch/titanbot:main
    - `NODE_ENV=production`
    - `LOG_LEVEL=warn` for a clean production console (critical issues + startup status)
    - `LOG_LEVEL=info` if you want more detailed operational logs
-   - If your chosen `PORT` is already used, TitanBot automatically tries the next port(s)
+   - If your chosen `PORT` is already used, YMbot automatically tries the next port(s)
 
    Environment options reference:
    - `NODE_ENV`: `development`, `production`, `test` (any non-`production` value is treated as non-production)
@@ -225,10 +241,10 @@ Notes:
 4. **Setup PostgreSQL Database** (Optional but recommended)
    ```bash
    # Create database and user
-   createdb titanbot
-   createuser titanbot
-   psql -c "ALTER USER titanbot PASSWORD 'yourpassword';"
-   psql -c "GRANT ALL PRIVILEGES ON DATABASE titanbot TO titanbot;"
+   createdb ymbot
+   createuser ymbot
+   psql -c "ALTER USER ymbot PASSWORD 'yourpassword';"
+   psql -c "GRANT ALL PRIVILEGES ON DATABASE ymbot TO ymbot;"
    ```
 
 5. **Verify Database Setup**
@@ -249,7 +265,7 @@ Notes:
 <a name="bot-intents"></a>
 
 ## Required Bot Intents
-TitanBot requires the following Discord intents:
+YMbot requires the following Discord intents:
 - **Guilds**
 - **Guild Messages**
 - **Message Content**
@@ -277,10 +293,10 @@ TitanBot requires the following Discord intents:
 
 ## License
 
-TitanBot is released under the MIT License. See [LICENSE](LICENSE) for details.
+YMbot is released under the MIT License. See [LICENSE](LICENSE) for details.
 
 ## Thank You
 
-Thank you for choosing TitanBot for your Discord server! We're constantly working to improve and add new features based on community feedback.
+Thank you for choosing YMbot for your Discord server! We're constantly working to improve and add new features based on community feedback.
 
 *Last updated: May 2026*
